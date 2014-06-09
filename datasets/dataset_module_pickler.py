@@ -1,12 +1,15 @@
 import sys
 import os
-import importlib
+#import importlib
+#import imp
+sys.path.append("../..")
 
-sys.path.append('/datasets')
-sys.path.append('/..')
-import datasets.generic_dataset as generic_dataset
-from dataset_util import DatasetTrio
+import yadlf.datasets.generic_dataset as generic_dataset
+from yadlf.datasets.dataset_util import DatasetTrio
 import cPickle as pickle
+
+package_name = "yadlf.datasets"
+
 
 def convert(module_filename):
 #    module_filename= os.path.join(os.path.dirname(__file__), module_filename)
@@ -19,12 +22,15 @@ def convert(module_filename):
 
     
     #module_obj = imp.load_source(module_name,module_filename)
-    module_obj = importlib.import_module(module_name,'datasets')
-
-
+    #module_obj = importlib.import_module(module_name,'yadlf.datasets')
+    package_obj =__import__(package_name, globals(), locals(),[module_name])
+    module_obj = package_obj.__dict__[module_name]
 
     datas = dict((name, val) for (name,val) in module_obj.__dict__.iteritems() 
                 if isinstance(val,(generic_dataset.Dataset, DatasetTrio)))
+
+    print datas
+   
 
     def pickle_data():
         with open(pickle_filename, 'wb') as pickle_file:
