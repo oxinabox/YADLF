@@ -1,8 +1,10 @@
 import sys
 import os
-import imp
+import importlib
+
 sys.path.append('/datasets')
-import generic_dataset
+sys.path.append('/..')
+import datasets.generic_dataset as generic_dataset
 from dataset_util import DatasetTrio
 import cPickle as pickle
 
@@ -16,7 +18,9 @@ def convert(module_filename):
     
 
     
-    module_obj = imp.load_source(module_name,module_filename)
+    #module_obj = imp.load_source(module_name,module_filename)
+    module_obj = importlib.import_module(module_name,'datasets')
+
 
 
     datas = dict((name, val) for (name,val) in module_obj.__dict__.iteritems() 

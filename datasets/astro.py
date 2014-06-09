@@ -1,5 +1,5 @@
 from __future__ import division
-import numpyutil as nutil
+from .. import numpyutil as nutil
 import numpy as np
 import dataset_util as dutil
 import generic_dataset as dc

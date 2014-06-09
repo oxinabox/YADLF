@@ -1,5 +1,5 @@
 import numpy as np
-import numpyutil as nutil
+from .. import numpyutil as nutil
 import dataset_util
 import abc
 

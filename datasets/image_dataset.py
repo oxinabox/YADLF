@@ -3,7 +3,8 @@ import numpy as np
 import itertools as it
 import pylab as pl
 
-import numpyutil as nutil
+from .. import numpyutil as nutil
+
 
 import generic_dataset
 

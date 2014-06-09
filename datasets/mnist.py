@@ -1,5 +1,5 @@
 import image_dataset as idc
-import numpyutil as nutil
+from .. import numpyutil as nutil
 import numpy as np
 import cPickle, gzip
 import dataset_util as dutil

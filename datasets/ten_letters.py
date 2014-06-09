@@ -1,4 +1,4 @@
-import numpyutil as nutil
+from .. import numpyutil as nutil
 # data sourced from https://archive.ics.uci.edu/ml/datasets/Artificial+Characters
 import numpy as np
 import image_dataset as idc
