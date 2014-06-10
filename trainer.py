@@ -8,7 +8,8 @@ import copy
 class Trainer(object):
     def __init__(self, trainee):
         self.trainee = trainee
-        self.prev_updates = nutil.uniop_nested(np.zeros_like, self.trainee.knowledge)
+        self.prev_updates = nutil.uniop_nested(
+            np.zeros_like, self.trainee.knowledge)
 
     def _get_batch_updates(self, batch):
         v0 = batch[0]
@@ -56,7 +57,7 @@ class Trainer(object):
                        init_patience = np.inf,
                        learning_rate=0.01,
                        momentum=0.9, 
-                       reg = 0.002,
+                       reg = 0.0002,
                        silent=False):
         num_batches = dutil.num_batches(train_set, batch_size)
 
