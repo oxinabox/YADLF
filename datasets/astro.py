@@ -37,22 +37,12 @@ def unsparse_freq(sparse_rep):
 #_lbls_phase = sparse_phase_shifts(_lbls_phase_raw)
 _lbls_freq = sparse_freq(_lbls_freq_raw)
 
-_norm_data_raw = dutil.normalize(_data_raw)
-
 #Frequency
-test_size = n_freqs*int(0.001*len(_norm_data_raw))
+test_size = n_freqs*int(0.001*len(_data_raw))
 valid_size = test_size
 
-#freq_full = idc.LabelledDataset(it.izip(_data_raw,_lbls_freq),True)
+_freq_full = dc.LabelledDataset(list(it.izip(_data_raw,_lbls_freq)))
 
+norm_freq=dutil.divvy_dataset(_freq_full, valid_size,test_size)
+dutil.normalise_dataset_trio(norm_freq)
 
-norm_freq_full = dc.LabelledDataset(list(it.izip(_norm_data_raw,_lbls_freq)),True)
-
-norm_freq=dutil.divvy_dataset(norm_freq_full, valid_size,test_size)
-
-#Phase
-#phase_full = idc.LabelledDataset(it.izip(_data_raw,_lbls_phase),datashape,True)
-
-#norm_phase_full = dc.LabelledDataset(list(it.izip(_norm_data_raw,_lbls_phase)),True)
-
-#norm_phase=dutil.divvy_dataset(norm_phase_full, valid_size,test_size)

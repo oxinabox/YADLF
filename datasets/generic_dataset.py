@@ -6,8 +6,9 @@ import abc
 
 
 class Dataset(object):
-    def __init__(self, data):
-        self.data = np.asarray(data)
+    def __init__(self, data, dtype):
+        self.dtype=dtype
+        self.data = data
 
     def make_from(self, data):
         '''
@@ -17,6 +18,14 @@ class Dataset(object):
         '''
         return self.__class__(data)
 
+    @property
+    def data(self):
+        return self._data
+
+    @data.setter
+    def data(self,value):
+        self._data=np.asarray(value,self.dtype)
+
 
     @abc.abstractmethod
     def __getitem__(self,sliceIndex):
@@ -25,7 +34,8 @@ class Dataset(object):
             return self.make_from(data)
         else:
             return data
-
+    
+    
 
     @abc.abstractproperty
     def datasize(self):
@@ -36,10 +46,11 @@ class Dataset(object):
 
 
 class UnlabelledDataset(Dataset):
-    def __init__(self,data):
+    def __init__(self, data):
         if not(len(data[0].shape)==1): #if it isn't flat, flatten it
             data = map(nutil.flatten, data)
-        Dataset.__init__(self,data)
+        dtype = np.float32 
+        Dataset.__init__(self,data, dtype)
 
 
     @property
@@ -49,24 +60,24 @@ class UnlabelledDataset(Dataset):
 
 
 class LabelledDataset(Dataset):
-    def __init__(self,data, balance=False):
-        Dataset.__init__(self,data)
-        if balance:
-            self.balance()
-
+    def __init__(self, data):
+        dtype = np.dtype([('data', np.float32, len(data[0][0])),
+                          ('lbls', np.float32, len(data[0][1]))
+                         ])
+        Dataset.__init__(self,data,dtype)
     
     def balance(self):
         '''Balances the dataset. Warning: This will delete elements if there is not a equal numbers of each class. '''
         orig_data = self.data
         balanced_gen = dataset_util.balance_ordering(orig_data)
-        self.data = np.asarray(list(balanced_gen))
+        self.data = list(balanced_gen)
 
 
     def make_from(self, data):
-        return LabelledDataset(data, False)
+        return LabelledDataset(data)
 
     def as_unlabelled(self):
-        unlabelled_data = zip(*self.data)[0]
+        unlabelled_data = self.data['data']
         return UnlabelledDataset(unlabelled_data)
 
     @property

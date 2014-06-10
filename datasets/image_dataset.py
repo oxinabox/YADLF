@@ -58,12 +58,12 @@ class UnlabelledImageDataset(generic_dataset.UnlabelledDataset):
 
 
 class LabelledImageDataset(generic_dataset.LabelledDataset):
-    def __init__(self,data,datashape=None, balance=False):
+    def __init__(self,data,datashape=None):
         self.datashape = _default_datashape(data[0][0], datashape)
-        generic_dataset.LabelledDataset.__init__(self,data, balance)
+        generic_dataset.LabelledDataset.__init__(self,data)
 
     def make_from(self, data):
-        return LabelledImageDataset(data, self.datashape, False)
+        return LabelledImageDataset(data, self.datashape)
 
     def show_data(self, sliceIndex):
         ''' good to use numpy.s_[slicenotation] to declare the sliceIndex'''
@@ -71,7 +71,7 @@ class LabelledImageDataset(generic_dataset.LabelledDataset):
         show_titled_data(data_vectors_and_titles, self.datashape)
 
     def as_unlabelled(self):
-        unlabelled_data = generic_dataset.LabelledDataset.as_unlabelled(self)
+        unlabelled_data = self.data['data']
         return UnlabelledImageDataset(unlabelled_data, self.datashape)
 
 

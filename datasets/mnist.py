@@ -4,14 +4,14 @@ import numpy as np
 import cPickle, gzip
 import dataset_util as dutil
 import os.path
-
+import copy
 
 def bind_labels(data,lbls_raw):
     def label (lbl_raw):
         return tuple(nutil.sparse(10,lbl_raw))
     data_list = [(np.asarray(dv),label(lbl)) 
                  for (dv, lbl) in zip(data, lbls_raw)]
-    return idc.LabelledImageDataset(data_list, balance=False)
+    return idc.LabelledImageDataset(data_list)
 
 def _balance_all(datasets):
     for dd in datasets:
@@ -32,6 +32,7 @@ base = dutil.DatasetTrio(
 
 _balance_all(base)
 
-norm = dutil.normalise_dataset_trio(base)
+norm= copy.deepcopy(base)
+dutil.normalise_dataset_trio(norm)
 
 

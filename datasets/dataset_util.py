@@ -25,25 +25,11 @@ def make_sym(base_data):
     datalist = [_create_sym_datum(basedata_iter.next,non_sym_bottom_maker ) for ii in xrange(num_elements)]
     return datalist
 
-def normalize(vectors):
-    old_settings = np.seterr(invalid='ignore')
-        #We can divide 0/0, sell comment below
-    try:
-        mat = np.asarray(vectors, dtype=float)
-        normed = (mat - mat.mean(axis=0)) /mat.std(axis=0)
-        #If there are any NaNs in the result, then a zero/zero division was done
-        #If the std dev is zero then the value must be equal to its mean
-        #Which means it should normalise to 0
-        normed[np.isnan(normed)]=0
-    finally:
-        np.seterr(**old_settings)
-    return normed
-
 def balance_ordering(labelled_data):
     from collections import defaultdict
     groups = defaultdict(list)
-    for (d,l) in labelled_data:
-        groups[l].append((d,l))
+    for (datum,lbl) in labelled_data:
+        groups[tuple(lbl)].append((datum,lbl))
     group_iters = map(iter, groups.values())
 
     for data_iter in it.cycle(group_iters): #Infinite Loop
@@ -76,24 +62,24 @@ def divvy_dataset(full, valid_size,test_size):
 
 
 def normalise_dataset_trio(trio):
-    '''Normalises the dataset trio, but makes sure it does not cheat.
+    '''Normalises the dataset trio (inplace), but makes sure it does not cheat.
     ie Only makes normalising characteristic off the training data.
     To improve validation, scales validation same as test
     '''
     import sklearn.preprocessing as preproc
-    def data_of(dataset):
-        return  np.array(list(dataset.data[:,0]))
+  
+    scaler = preproc.StandardScaler().fit(trio.train.data['data'])
 
-    scaler = preproc.StandardScaler().fit(data_of(trio.train))
-
-    def norm_dataset(dataset):
-        data_raw = data_of(dataset)
-        lbls_raw = dataset.data[:,1]
+    def norm_dataset(dataset): 
+        data_raw = dataset.data['data']
+        lbls_raw = dataset.data['lbls']
         
         data_raw_norm = scaler.transform(data_raw)
-        return dataset.make_from(zip(data_raw_norm, lbls_raw))
+        dataset.data = zip(data_raw_norm, lbls_raw)
 
-    return DatasetTrio(*map(norm_dataset, trio))
+    for dataset in trio:
+        norm_dataset(dataset)
+
 
 def balance_all(trio):
     for ds in trio:
