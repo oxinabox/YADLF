@@ -38,7 +38,7 @@ class Dataset(object):
     
 
     @abc.abstractproperty
-    def datasize(self):
+    def datum_size(self):
         pass
 
     def __len__(self):
@@ -54,7 +54,7 @@ class UnlabelledDataset(Dataset):
 
 
     @property
-    def datasize(self):
+    def datum_size(self):
         return np.size(self.data[0][0])
 
 
@@ -84,5 +84,5 @@ class LabelledDataset(Dataset):
     def label_size(self):
         return np.size(self.data[0][1])
     @property
-    def datasize(self):
+    def datum_size(self):
         return np.size(self.data[0][0])
