@@ -17,14 +17,16 @@ class RBM(object):
 
     @classmethod
     def random_init_params(cls,visible_layer_size, hidden_layer_size):
-        weight= np.random.normal(0,0.01,(hidden_layer_size,visible_layer_size))
+        weight= np.random.normal(0,0.01,
+                                 (hidden_layer_size,visible_layer_size))
         hidden_bias = np.random.normal(0,0.01,(hidden_layer_size))
         visible_bias =np.random.normal(0,0.01,(visible_layer_size))
         return (weight, hidden_bias,visible_bias)
 
     @classmethod
     def random_init(cls,visible_layer_size, hidden_layer_size):
-        params =  cls.random_init_params(visible_layer_size, hidden_layer_size)
+        params =  cls.random_init_params(visible_layer_size, 
+                                         hidden_layer_size)
         return cls(*params)
 
     @abc.abstractmethod
@@ -133,7 +135,8 @@ class GbRBM(RBM):
     
     #$p(h_j=1|\mathbf{v})=\sigma(b_j+\sum_{\forall i}{v_iw_{ij}})$
     def prob_h_given_v (self, v):
-        return nn.sigmoid(self.hidden_bias + np.dot(self.weight,v)) #sum up rows (v is a column vector)
+        return nn.sigmoid(self.hidden_bias + np.dot(self.weight,v)) 
+            #sum up rows (v is a column vector)
 
     def mean_v_given_h (self,h):
         return self.visible_bias + np.dot(h,self.weight) #sum up columns. (h is a row vector)
