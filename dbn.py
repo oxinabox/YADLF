@@ -24,15 +24,18 @@ class DBN:
 
     @classmethod
     def random_init(cls,layer_sizes):
+
         params = [ rbm.RBM.random_init_params(sz_this,sz_next)
                     for (sz_this,sz_next) in nutil.pairwise(layer_sizes)]
+                #Ask the RBM class what randomly intialised parameters looklike
         return cls(*zip(*params))
 
 
-
-
-
-    def pre_train_unsupervised(self, input_data, rep_freq=-1, learning_rate = 0.01):
+    def pre_train_unsupervised(self, input_data, rep_freq=-1, 
+                               learning_rate = 0.001,
+                               momentum= 0.9,
+                               reg = 0.0002,
+                              ):
         trained_rbms = []
         for rbm_num, training_rbm in enumerate(self.rbms):
             this_rbm_trainer = trainer.Trainer(training_rbm)
@@ -43,10 +46,13 @@ class DBN:
                     prev_layer_out = nutil.sample(prob_prev) #For BbRBM need 0 or 1
                 #Train a batch of 1 
                 this_rbm_trainer.train_online([prev_layer_out],
-                                              learning_rate=learning_rate)
+                                              learning_rate=learning_rate,
+                                              momentum=momentum,
+                                              reg = reg)
                
                 if input_num%rep_freq==1:
-                    print "Done input %i/%i on RBM %i" % (input_num,len(input_data),rbm_num+1)
+                    print("one input %i/%i on RBM %i" % 
+                        (input_num,len(input_data),rbm_num+1))
 
             #The one were were training is now trained, lock it it and use it
             trained_rbms.append(training_rbm) 
