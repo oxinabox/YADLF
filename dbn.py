@@ -6,7 +6,6 @@ import trainer
 import special_neuralnets
 
 
-
 class DBN:
     def __init__(self, weights, hidden_biases, visible_biases, 
                  act_func=nn.sigmoid):
