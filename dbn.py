@@ -31,7 +31,7 @@ class DBN:
         return cls(*zip(*params))
 
 
-    def pre_train_unsupervised(self, input_data, rep_freq=-1, 
+    def train_unsupervised(self, input_data, rep_freq=-1,
                                learning_rate = 0.001,
                                momentum= 0.9,
                                reg = 0.0002,
