@@ -34,7 +34,7 @@ class DBN:
     def train_unsupervised(self, input_data, rep_freq=-1,
                                learning_rate = 0.001,
                                momentum= 0.9,
-                               reg = 0.0002,
+                               reg = 0.0002
                               ):
         trained_rbms = []
         for rbm_num, training_rbm in enumerate(self.rbms):
@@ -56,7 +56,8 @@ class DBN:
 
             #The one were were training is now trained, lock it it and use it
             trained_rbms.append(training_rbm) 
-            print "Done RBM: %i/%i" % (rbm_num+1, len(self.rbms))
+            if rep_freq>0:
+                print "Done RBM: %i/%i" % (rbm_num+1, len(self.rbms))
     
     def as_neural_net(self, output_layer_size, constructor = None):
         '''

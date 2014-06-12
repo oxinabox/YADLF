@@ -48,6 +48,10 @@ class RBM(object):
         '''
         if mean_field==None:
             mean_field = self.mean_field
+
+        assert type(v)!=np.void, "datum was np.void." + \
+                "did you mistakenly use a labelled dataset?"
+
         h=nutil.sample(self.prob_h_given_v(v))
         posGrad=np.outer(h,v)
 

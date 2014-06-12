@@ -59,6 +59,14 @@ class Trainer(object):
                        momentum=0.9, 
                        reg = 0.0002,
                        silent=False):
+        '''
+            Trains wit early stopping method.
+            Modifies trainee in place.
+            return best batch number, validation error at that best batch number.
+            Trainee is set to the state it was in at that best batch.
+            A copy of the trainees knowledge at the end (without the rollback is also returned)
+        '''
+
         num_batches = dutil.num_batches(train_set, batch_size)
 
         best_at_batch_num =  None
@@ -87,15 +95,17 @@ class Trainer(object):
                         return
                     
                     if not silent:
-                         print "Error Rate: %f \t\t\t(%i/%i)" % (
+                        print "Error Rate: %f \t\t\t(%i/%i)" % (
                             error_rate,
                             batch_num, 
                             num_batches)
-            print "Done All"
+                        print "Done All"
         finally:
-            print "Validation Error:\t%f\n From Batch: \t %i" %(best_error_rate, best_at_batch_num)
-            self.trainee.knowledge = best_knowledge
-            return best_at_batch_num, best_error_rate
+            if not silent:
+                print "Validation Error:\t%f\n From Batch: \t %i" %(best_error_rate, best_at_batch_num)
+            final_trainee_knowledge = self.trainee.knowledge  #Make a backup, incase wanted
+            self.trainee.knowledge = best_knowledge            #Revert to best state
+            return best_at_batch_num, best_error_rate, final_trainee_knowledge
 
 
     def early_stopping_repreating(self,
