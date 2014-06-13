@@ -1,8 +1,6 @@
 import numpy as np
 
 import itertools as it
-import pylab as pl
-
 from .. import numpyutil as nutil
 
 
@@ -10,6 +8,7 @@ import generic_dataset
 
 
 def show_titled_data(titled_data_vectors, datashape):
+    import pylab as pl
     print datashape
     pl.subplots_adjust(wspace=2)
     for ii, dvt in enumerate(titled_data_vectors):

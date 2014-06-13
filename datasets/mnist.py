@@ -19,10 +19,12 @@ def _balance_all(datasets):
 
 
 _raw_filename = os.path.join(os.path.dirname(__file__),'mnist_dln.pkl.gz')
-with  gzip.open(_raw_filename, 'rb') as pickled:
-    (_train_raw, _train_labels_raw), \
-    (_valid_raw, _valid_labels_raw),\
-    (_test_raw, _test_labels_raw) = cPickle.load(pickled)
+pickled = gzip.open(_raw_filename, 'rb')
+(_train_raw, _train_labels_raw), \
+(_valid_raw, _valid_labels_raw),\
+(_test_raw, _test_labels_raw) = cPickle.load(pickled)
+pickled.close()
+
 
 
 base = dutil.DatasetTrio(

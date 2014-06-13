@@ -1,4 +1,5 @@
-DATASETS = ten_letters_loaded.py mnist_loaded.py astro_loaded.py
+DATASETS = ten_letters_loaded.py mnist_loaded.py 
+#astro_loaded.py
 
 all: $(DATASETS)
 
