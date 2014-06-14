@@ -4,7 +4,9 @@ import nn_math as nn
 import abc
 
 def sample(probVector):
-        return np.random.random_sample(probVector.shape)<probVector
+    '''returns as a float, a 1 or a 0'''
+    sample = np.random.random_sample(probVector.shape)<probVector
+    return np.asarray(sample, dtype=np.float32)
 
 #base on from http://www.iro.umontreal.ca/~lisa/twiki/bin/view.cgi/Public/DBNPseudoCode (which is from bengio2009learning)
 class RBM(object):
