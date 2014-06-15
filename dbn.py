@@ -34,11 +34,12 @@ class DBN:
     def train_unsupervised(self, input_data, rep_freq=-1,
                                learning_rate = 0.001,
                                momentum= 0.9,
-                               reg = 0.0002
+                               reg = 0.0002,
+							   clip = None
                               ):
         trained_rbms = []
         for rbm_num, training_rbm in enumerate(self.rbms):
-            this_rbm_trainer = trainer.Trainer(training_rbm)
+            this_rbm_trainer = trainer.Trainer(training_rbm, clip)
             for input_num, input_datum in enumerate(input_data):
                 prev_layer_out = input_datum ##bottom RBM is a GbRBM so can take continuously valued inputs
                 for trained_rbm in trained_rbms:

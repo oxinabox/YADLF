@@ -4,9 +4,18 @@ import numpyutil as nutil
 import datasets.dataset_util as dutil
 import copy 
 
+default_clip = np.exp([700,700])*[-1.0,1.0] 
+#A large number, but still surficently far from the actual bounds to make crash unlikely
 
 class Trainer(object):
-    def __init__(self, trainee):
+    def __init__(self, trainee, clip=None):
+		'''
+		If clip is given then, as a tupple first containing lowerbound then upper, then the trainee knowledge is capped so that it never goes outside those bounds.
+		Clip should be set small enough that no update can cause a overflow etc.
+		'''
+		assert(clip is None or len(clip)==2)
+		self.clip = clip
+		
         self.trainee = trainee
         self.prev_updates = nutil.uniop_nested(
             np.zeros_like, self.trainee.knowledge)
@@ -31,6 +40,14 @@ class Trainer(object):
                                      self.prev_updates,
                                      self.trainee.knowledge)
         self.trainee.knowledge = nutil.add_nested(self.trainee.knowledge,updates)
+		
+		if (self.clip):
+			def do_clip(know):
+				#Do the clipping inplace
+				np.clip(know, *self.clip, know) 
+			
+			nutil.uniop_nested(do_clip,self.trainee.knowledge)
+		
         self.prev_updates = updates 
 
     def train_minibatch(self,
