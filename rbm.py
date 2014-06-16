@@ -125,7 +125,7 @@ class BbRBM(RBM):
     mean_v_given_h = prob_v_given_h
     
     def sample_v_given_h(self,h):
-        return nutil.sample(self.prob_v_given_h(h))
+        return sample(self.prob_v_given_h(h))
 
 
 
