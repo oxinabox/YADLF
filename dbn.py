@@ -94,12 +94,15 @@ class DBN:
         return output_above
     
     
-    def get_code(self,input_vect, depth=None):
-        depth = len(self.rbms) if depth==None else depth
-
+    def get_code(self,input_vect, code_depth=None):
+        code_depth = len(self.rbms) if code_depth==None else code_depth
+        assert(code_depth<=len(self.rbms))
+               
         output_below = input_vect
-        for rbm in self.rbms:
-            output_below = nutil.sample(rbm.prob_h_given_v(output_below))        
+        for (cur_depth, rbm) in enumerate(self.rbms,start=1):
+            output_below = nutil.sample(rbm.prob_h_given_v(output_below))
+            if cur_depth>=code_depth: 
+                break
         return output_below
     
     def generate_image_from_bottom(self,x, equib_dur):
