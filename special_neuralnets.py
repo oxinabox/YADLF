@@ -26,7 +26,6 @@ class FixedTopErrorSignalNeuralNet(neuralnet.NeuralNet):
                     topActFunc=nn.softmax, d_topActFunc=nn.dSoftmax):
 
         weights, biases = neuralnet.random_weights_baises(layer_sizes)
-        print cls
         return cls(weights, biases, post_process, actFunc, d_actFunc, topActFunc,d_topActFunc)
 
 
