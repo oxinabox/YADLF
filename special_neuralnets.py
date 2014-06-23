@@ -33,4 +33,7 @@ class FixedTopErrorSignalNeuralNet(neuralnet.NeuralNet):
     def _top_dEdx_j(self, target, output):
         return output-target #CHEAT: This is always the best function. Skip the Calcus and just do it
 
+def new_linear_classifier(input_size, output_size):
+    return FixedTopErrorSignalNeuralNet.random_init([input_size, output_size],
+                                                    post_process = nn.winner_takes_all)
 

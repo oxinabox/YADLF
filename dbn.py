@@ -94,7 +94,9 @@ class DBN:
         return output_above
     
     
-    def get_output(self,input_vect):
+    def get_code(self,input_vect, depth=None):
+        depth = len(self.rbms) if depth==None else depth
+
         output_below = input_vect
         for rbm in self.rbms:
             output_below = nutil.sample(rbm.prob_h_given_v(output_below))        

@@ -18,9 +18,18 @@ class Dataset(object):
         '''
         return self.__class__(data)
 
+
+    def extend(self, extra_dataset):
+        '''Appends the data from the extra_dataset, onto this one'''
+        assert extra_dataset.dtype == self.dtype, \
+                "dtype should be " + str(self.dtype) + "dtype is " + str(extra_dataset.dtype)
+        self.data = np.concatenate((self.data, extra_dataset.data))
+
+
     @property
     def data(self):
         return self._data
+
 
     @data.setter
     def data(self,value):
