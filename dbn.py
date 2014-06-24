@@ -94,8 +94,8 @@ class DBN:
         return output_above
     
     
-    def get_code(self,input_vect, code_depth=None):
-        code_depth = len(self.rbms) if code_depth==None else code_depth
+    def get_code(self,input_vect, depth=None):
+        code_depth = len(self.rbms) if depth==None else depth
         assert(code_depth<=len(self.rbms))
                
         output_below = input_vect
@@ -112,15 +112,25 @@ class DBN:
 
     @property
     def weights(self):
-        return list(map(lambda rbm: rbm.weight, self.rbms))
+        return map(lambda rbm: rbm.weight, self.rbms)
             
     @property
     def upward_biases(self):
-        return list(map(lambda rbm: rbm.hidden_bias, self.rbms))
+        return map(lambda rbm: rbm.hidden_bias, self.rbms)
                 
     @property
     def downward_biases(self):
-        return list(map(lambda rbm: rbm.visible_bias, self.rbms))
+        return map(lambda rbm: rbm.visible_bias, self.rbms)
+    
+    def get_layer_size(self, depth):
+        ''' Returned the layers size of they layer at depth. The input is depth=0.
+            This is the length of the vector that will be returned by get_code at that depth.
+        '''
+        if depth==0:
+            return len(self.downward_biases[0])
+        else:
+            return len(self.upward_biases[depth-1])
+
         
     @property
     def knowledge(self):
