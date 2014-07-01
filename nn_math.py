@@ -4,11 +4,13 @@ import numpy as np
 def clip_for_exp(x):
     return x.clip(-700.0,700.0) #Avoid overflows (Negitive bound not actually required)
 
-from scipy.special import expit
+from scipy.special import expit, logit
 def sigmoid(x):
     x = clip_for_exp(x)
     return expit(x)
 def dSigmoid(y):return y*(1-y) #where y=sigmoid(x)
+
+inv_sigmoid = logit
 
 def softmax(x):
     x = clip_for_exp(x)

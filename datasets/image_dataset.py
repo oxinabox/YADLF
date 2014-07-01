@@ -16,6 +16,7 @@ def show_titled_data(titled_data_vectors, datashape):
         pl.subplot(1,len(titled_data_vectors), ii+1)
         pl.imshow(1-np.reshape(dv, datashape)) #,  cmap = pl.cm.Greys_r)
         pl.title(str(titletext))
+        pl.show()
 
 
 def show_data(data_vectors, datashape):
