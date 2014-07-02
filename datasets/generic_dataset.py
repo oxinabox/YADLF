@@ -53,9 +53,6 @@ class Dataset(object):
     def __len__(self):
         return len(self.data)
 
-    def __array__(self):
-        '''For numpy to make casting to an array faster'''
-        return self.data
 
 
 class UnlabelledDataset(Dataset):
