@@ -12,6 +12,7 @@ def show_titled_data(titled_data_vectors, datashape):
     print datashape
     pl.subplots_adjust(wspace=2)
     for ii, dvt in enumerate(titled_data_vectors):
+        pl.figure(figsize=datashape,dpi=200)
         (dv,titletext) = dvt
         pl.subplot(1,len(titled_data_vectors), ii+1)
         pl.imshow(1-np.reshape(dv, datashape)) #,  cmap = pl.cm.Greys_r)
