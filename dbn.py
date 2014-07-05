@@ -3,10 +3,10 @@ import numpy as np
 import nn_math as nn
 import rbm
 import trainer
-import special_neuralnets
+from stacked_generative_model import StackedGenerativeModel
 
 
-class DBN:
+class DBN(StackedGenerativeModel):
     def __init__(self, weights, hidden_biases, visible_biases, 
                  act_func=nn.sigmoid):
         self.rbms = []
@@ -59,27 +59,7 @@ class DBN:
             trained_rbms.append(training_rbm) 
             if rep_freq>0:
                 print "Done RBM: %i/%i" % (rbm_num+1, len(self.rbms))
-    
-    def as_neural_net(self, output_layer_size, constructor = None):
-        '''
-        Constructor: If given a function to construct a neural net, 
-        thak takes the weights and baises and returns a net
-        '''
-        weights = self.weights + [np.random.normal(0.0,0.01,
-                                (output_layer_size, self.weights[-1].shape[0]))]
-        biases = self.upward_biases + [np.random.normal(0.0,0.01,
-                                                        output_layer_size)]
-        
-        
-        def default(ws,bs):
-            return special_neuralnets.FixedTopErrorSignalNeuralNet(ws, bs,
-                        post_process = nn.winner_takes_all,
-                        topActFunc = nn.softmax, d_topActFunc=nn.dSoftmax)
-        constructor = constructor or default
-        return constructor(weights,biases)
-        
-        
-            
+
     def generate_image_from_top(self, y, equib_dur=1):
         top_rbm = self.rbms[-1];
         output_above = y
@@ -93,20 +73,9 @@ class DBN:
             
         return output_above
     
-    
-    def get_code(self,input_vect, depth=None):
-        code_depth = len(self.rbms) if depth==None else depth
-        assert(code_depth<=len(self.rbms))
-               
-        output_below = input_vect
-        for (cur_depth, rbm) in enumerate(self.rbms,start=1):
-            output_below = nutil.sample(rbm.prob_h_given_v(output_below))
-            if cur_depth>=code_depth: 
-                break
-        return output_below
-    
+
     def generate_image_from_bottom(self,x, equib_dur):
-        top_out = self.get_output(x)
+        top_out = self.get_code(x)
         return x, self.generate_image_from_top(top_out, equib_dur=equib_dur)
 
 
@@ -115,13 +84,23 @@ class DBN:
         return map(lambda rbm: rbm.weight, self.rbms)
             
     @property
-    def upward_biases(self):
+    def biases(self):
+        '''Biases going upwards'''
         return map(lambda rbm: rbm.hidden_bias, self.rbms)
                 
     @property
     def downward_biases(self):
         return map(lambda rbm: rbm.visible_bias, self.rbms)
-    
+
+    @property
+    def knowledge(self):
+        return [self.weights, self.biases, self.downward_biases]
+
+    @property
+    def layer_models(self):
+        self.rbms
+
+
     def get_layer_size(self, depth):
         ''' Returned the layers size of they layer at depth. The input is depth=0.
             This is the length of the vector that will be returned by get_code at that depth.
@@ -129,9 +108,7 @@ class DBN:
         if depth==0:
             return len(self.downward_biases[0])
         else:
-            return len(self.upward_biases[depth-1])
+            return len(self.biases[depth-1])
 
         
-    @property
-    def knowledge(self):
-        return [self.weights, self.upward_biases, self.downward_biases]
+

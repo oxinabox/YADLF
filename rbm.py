@@ -43,7 +43,6 @@ class RBM(object):
     def prob_h_given_v(self,h):
         pass
 
-
     def do_CD1_once(self,v, mean_field=None):
         '''For optimistation reaasons this is seperate from CD-k
         Do ensure v is in appropriate domain (eg bernulli, gaussian).
@@ -63,26 +62,6 @@ class RBM(object):
         delta_weight = (posGrad-negGrad)
         delta_hidden_bias = (h-hp_prob)
         delta_visible_bias = (v-vp)
-        return delta_weight,delta_hidden_bias,delta_visible_bias
-
-    def do_CDk_once(self,v, k):
-        """ Does not currently support Mean Fiel"""
-        h=nutil.sample(self.prob_h_given_v(v))
-        posGrad=np.outer(h,v)
-
-        vp_rec =  None
-        hp_prob = None
-        hp_rec = h
-        for ii in range(0,k):
-            vp_rec=self.sample_v_given_h(hp_rec)
-            hp_prob=self.prob_h_given_v(vp_rec)
-            hp_rec = nutil.sample(hp_prob)
-
-        negGrad=np.outer(hp_prob,vp_rec)
-
-        delta_weight = (posGrad-negGrad)
-        delta_hidden_bias = (h-hp_prob)
-        delta_visible_bias = (v-vp_rec)
         return delta_weight,delta_hidden_bias,delta_visible_bias
 
     get_training_updates = do_CD1_once
@@ -105,6 +84,14 @@ class RBM(object):
         h=nutil.sample(self.prob_h_given_v(v))
         img = self.mean_v_given_h(h) if mean_field else self.sample_v_given_h(h)
         return (v,img)
+
+
+    def get_code(self, x):
+        '''Returns a encoded representation of the input
+        In the form of a sample from the hidden layer'''
+        return nutil.sample(self.prob_h_given_v(x))
+
+
 
 
 class BbRBM(RBM):
