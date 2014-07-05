@@ -4,14 +4,14 @@ import nn_math as nn_math
 from  stacked_generative_model import StackedGenerativeModel
 
 
-def append_bais_units(data):
+def append_bias_units(data):
     colshape=np.shape(data)[:-1] + (1,)
     return np.hstack((data, np.ones(colshape)))
 
 class M_DA(object):
-    def __init__(self, act_fun=lambda i:i, weight_bais=None):
+    def __init__(self, act_fun=lambda i:i, weight_bias=None):
         self.act_fun = act_fun
-        self.weight_bais=weight_bais
+        self.weight_bias=weight_bias
 
 
     def train_unsupervised(self,data, noise_prob=0.2, reg=0.00001):
@@ -20,7 +20,7 @@ class M_DA(object):
         data = np.asarray(data)
 
         #X in paper, xxb in article
-        data_with_bias = append_bais_units(data).T
+        data_with_bias = append_bias_units(data).T
         datum_len = data_with_bias.shape[0]
 
         #q in paper and aricle
@@ -38,23 +38,23 @@ class M_DA(object):
         numer = P[:-1,:]
         denom = Q+reg_mat
 
-        self.weight_bais=np.dot(numer, np.linalg.pinv(denom)).T
+        self.weight_bias=np.dot(numer, np.linalg.pinv(denom)).T
 
 
     def get_output(self,x):
-        xb=append_bais_units(x)
-        y=np.dot(xb,self.weight)
+        xb=append_bias_units(x)
+        y=np.dot(xb,self.weight_bias)
         return self.act_fun(y)
 
     get_code=get_output
 
     @property
     def bias(self):
-        return self.weight_bais[-1,:]
+        return self.weight_bias[-1,:]
 
     @property
     def weight(self):
-        return self.weight_bais[:-1,:]
+        return self.weight_bias[:-1,:]
 
     @property
     def knowledge(self):
@@ -86,7 +86,7 @@ class M_SDA(StackedGenerativeModel):
 
     @property
     def layer_models(self):
-        self.mdas
+        return self.mdas
 
     @property
     def weights(self):

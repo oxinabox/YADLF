@@ -91,40 +91,38 @@ class Trainer(object):
         best_at_batch_num =  None
         best_error_rate = np.inf
         best_knowledge = copy.deepcopy(self.trainee.knowledge)
-        try:
-            patience_rem = init_patience
-            for batch_num, batch in enumerate(dutil.batch_split(train_set, batch_size)):
-                self.train_batch(batch, learning_rate, momentum, reg)
-                if batch_num%validation_period == 0:
-                    error_rate = self.trainee.error_rate(valid_set)
-                    if error_rate<=best_error_rate:
-                        best_error_rate = error_rate
-                        patience_rem = init_patience
-                        best_knowledge = copy.deepcopy(self.trainee.knowledge)
-                        best_at_batch_num = batch_num
-                        if not silent: print("!"),
-                    else:
-                        patience_rem-=1
-                        if patience_rem==0:
-                            print "Out of Patience"
-                            break
-                    if error_rate==0.0:
-                        #CONSIDER: This is not ideal as valid_set<test_set
-                        print "Perfection Obtained in batch: " + str(batch_num)
-                        return
-                    
-                    if not silent:
-                        print "Error Rate: %f \t\t\t(%i/%i)" % (
-                            error_rate,
-                            batch_num, 
-                            num_batches)
-                        print "Done All"
-        finally:
-            if not silent:
-                print "Validation Error:\t%f\n From Batch: \t %i" %(best_error_rate, best_at_batch_num)
-            final_trainee_knowledge = self.trainee.knowledge  #Make a backup, incase wanted
-            self.trainee.knowledge = best_knowledge            #Revert to best state
-            return best_at_batch_num, best_error_rate, final_trainee_knowledge
+        patience_rem = init_patience
+        for batch_num, batch in enumerate(dutil.batch_split(train_set, batch_size)):
+            self.train_batch(batch, learning_rate, momentum, reg)
+            if batch_num%validation_period == 0:
+                error_rate = self.trainee.error_rate(valid_set)
+                if error_rate<=best_error_rate:
+                    best_error_rate = error_rate
+                    patience_rem = init_patience
+                    best_knowledge = copy.deepcopy(self.trainee.knowledge)
+                    best_at_batch_num = batch_num
+                    if not silent: print("!")
+                else:
+                    patience_rem-=1
+                    if patience_rem==0:
+                        print "Out of Patience"
+                        break
+                if error_rate==0.0:
+                    #CONSIDER: This is not ideal as valid_set<test_set
+                    print "Perfection Obtained in batch: " + str(batch_num)
+                    return
+                
+                if not silent:
+                    print "Error Rate: %f \t\t\t(%i/%i)" % (
+                        error_rate,
+                        batch_num, 
+                        num_batches)
+
+        if not silent:
+            print "Validation Error:\t%f\n From Batch: \t %i" %(best_error_rate, best_at_batch_num)
+        final_trainee_knowledge = self.trainee.knowledge  #Make a backup, incase wanted
+        self.trainee.knowledge = best_knowledge            #Revert to best state
+        return best_at_batch_num, best_error_rate, final_trainee_knowledge
 
 
     def early_stopping_repreating(self,
