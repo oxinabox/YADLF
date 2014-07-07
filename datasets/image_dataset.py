@@ -26,28 +26,21 @@ def show_data(data_vectors, datashape):
     show_titled_data(dvt, datashape)
 
 
-def _default_datashape(vector, datashape=None):
-        if not datashape:
-            sqlen= round(np.size(vector)**0.5) #Assume Square
-            assert sqlen**2==np.size(vector), \
-                    "if datashape not given, the vector must be square"
-            datashape=(sqlen, sqlen)
-        else:
-           assert datashape[0]*datashape[1]==np.size(vector), \
-                  """dataShape is not a possible shape of the data. Shape of data %i""" % np.size(vector)  
+def _default_datashape(vector):
+        sqlen= round(np.size(vector)**0.5) #Assume Square
+        assert sqlen**2==np.size(vector), \
+            "if datashape not given, the vector must be square"
+        datashape=(sqlen, sqlen)
         return datashape
-
-
 
 
 class UnlabelledImageDataset(generic_dataset.UnlabelledDataset):
     def __init__(self,data,datashape=None):
-        self.datashape = _default_datashape(data[0], datashape)
+        self.datashape = datashape if datashape else _default_datashape(data[0])
         generic_dataset.UnlabelledDataset.__init__(self,data)
 
     def make_from(self, data):
-        return UnlabelledImageDataset(data, self.datashape)
-
+        return UnlabelledImageDataset(data, self.datashape, self.dtype)
 
     def show_data(self, sliceIndex):
         ''' good to use numpy.s_[slicenotation] to declare the sliceIndex'''
@@ -55,25 +48,22 @@ class UnlabelledImageDataset(generic_dataset.UnlabelledDataset):
         show_data(dataVectors, self.datashape)
 
 
-
-
-
 class LabelledImageDataset(generic_dataset.LabelledDataset):
-    def __init__(self,data,datashape=None):
-        self.datashape = _default_datashape(data[0][0], datashape)
-        generic_dataset.LabelledDataset.__init__(self,data)
+    def __init__(self,data,datashape=None, dtype=None): 
+        self.datashape = datashape if datashape\
+                                   else _default_datashape(data[0][0])
+        generic_dataset.LabelledDataset.__init__(self,data,dtype)
 
     def make_from(self, data):
-        return LabelledImageDataset(data, self.datashape)
+        return LabelledImageDataset(data, self.datashape, self.dtype)
 
     def show_data(self, sliceIndex):
         ''' good to use numpy.s_[slicenotation] to declare the sliceIndex'''
+        print "+"+sliceIndex
         data_vectors_and_titles = self.data[sliceIndex]        
         show_titled_data(data_vectors_and_titles, self.datashape)
 
     def as_unlabelled(self):
         unlabelled_data = self.data['data']
         return UnlabelledImageDataset(unlabelled_data, self.datashape)
-
-
 

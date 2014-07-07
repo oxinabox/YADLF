@@ -18,13 +18,13 @@ class Dataset(object):
         '''
         return self.__class__(data)
 
+    
 
-    def extend(self, extra_dataset):
-        '''Appends the data from the extra_dataset, onto this one'''
+    def concatenate(self, extra_dataset):
         assert extra_dataset.dtype == self.dtype, \
                 "dtype should be " + str(self.dtype) + "dtype is " + str(extra_dataset.dtype)
-        self.data = np.concatenate((self.data, extra_dataset.data))
-
+        data = np.concatenate((self.data, extra_dataset.data))
+        return self.make_from(data) 
 
     @property
     def data(self):
@@ -69,11 +69,13 @@ class UnlabelledDataset(Dataset):
 
 
 
+
 class LabelledDataset(Dataset):
-    def __init__(self, data):
-        dtype = np.dtype([('data', np.float32, len(data[0][0])),
-                          ('lbls', np.float32, len(data[0][1]))
-                         ])
+    def __init__(self, data, dtype=None):
+        if dtype==None:
+            dtype = np.dtype([('data', np.float32, len(data[0][0])),
+                              ('lbls', np.float32, len(data[0][1]))
+                             ])
         Dataset.__init__(self,data,dtype)
     
     def balance(self):
@@ -84,8 +86,7 @@ class LabelledDataset(Dataset):
 
 
     def make_from(self, data):
-        return LabelledDataset(data)
-
+        return LabelledDataset(data, self.dtype)
     def as_unlabelled(self):
         unlabelled_data = self.data['data']
         return UnlabelledDataset(unlabelled_data)

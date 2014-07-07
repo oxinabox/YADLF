@@ -51,7 +51,7 @@ class RBM(object):
             mean_field = self.mean_field
                
 
-        h=nutil.sample(self.prob_h_given_v(v))
+        h=sample(self.prob_h_given_v(v))
         posGrad=np.outer(h,v)
 
         vp=self.mean_v_given_h(h) if mean_field else self.sample_v_given_h(h)
@@ -77,19 +77,28 @@ class RBM(object):
 
     def generate_image_from_noise(self,pPixOn=0.2, mean_field=False):
         ''' If show_prob is false, will sample from the probability to get a concrete image, otherwise will display a probabilit "grey scale" '''
-        v = nutil.sample(pPixOn*np.ones(len(self.visible_bias)))
+        v = sample(pPixOn*np.ones(len(self.visible_bias)))
         return self.generate_image(v, mean_field)
 
     def generate_image(self,v, mean_field=False):
-        h=nutil.sample(self.prob_h_given_v(v))
+        h=sample(self.prob_h_given_v(v))
         img = self.mean_v_given_h(h) if mean_field else self.sample_v_given_h(h)
         return (v,img)
 
 
-    def get_code(self, x):
+    def get_code(self, xs):
         '''Returns a encoded representation of the input
         In the form of a sample from the hidden layer'''
-        return nutil.sample(self.prob_h_given_v(x))
+        
+        #TODO: this could be done with np.vectorise
+        def get_code_single(x):
+            return sample(self.prob_h_given_v(x))
+
+        if np.ndim(xs) == 1:
+            return get_code_single(xs)
+        else:
+            return np.asarray(map(get_code_single, xs))
+
 
 
 

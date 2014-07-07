@@ -3,17 +3,25 @@ import functools
 from  datasets.generic_dataset import LabelledDataset
 import datasets.dataset_util as dutil
 
-def code_dataset(dbn, depth, dataset):
-    return LabelledDataset([ (dbn.get_code(data,depth), lbl) 
-                                    for (data, lbl) in dataset])
+def code_dataset(model, depth, dataset):
+    data = dataset.data['data']
+    lbls = dataset.data['lbl']
+    coded_datalist = zip(model.get_code(data,depth), lbls)
+    #OPTIMIMISE: this could be better, makign a list then it is turned ino an array in thethe LavelledDataset        
 
-def input_and_code_dataset(dbn, depth,dataset):
-    def encode(datum):
-        code = dbn.get_code(datum,depth)
-        return np.concatenate((code,datum))
+    return LabelledDataset(coded_datalist)
 
-    return LabelledDataset([(encode(data),lbl)
-                                    for (data, lbl) in dataset])
+def input_and_code_dataset(model, depth,dataset):
+    data = dataset.data['data']
+    lbls = dataset.data['lbl']
+    codes = model.get_code(data,depth)
+    enhanced_data = np.concatenate((data,codes), axis=1)
+    data_list = zip(enhanced_data, lbls) 
+
+    #OPTIMIMISE: this could be better, makign a list then it is turned ino an array in thethe LavelledDataset        
+
+    return LabelledDataset(data_list)
+       
 
 def rerep_trio(rerep_dataset_func, dbn, depth, datatrio):
     encode_func = functools.partial(rerep_dataset_func,dbn,depth)
