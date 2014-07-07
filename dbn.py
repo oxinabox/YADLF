@@ -98,7 +98,7 @@ class DBN(StackedGenerativeModel):
 
     @property
     def layer_models(self):
-        self.rbms
+        return self.rbms
 
 
     def get_layer_size(self, depth):
