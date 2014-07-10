@@ -2,7 +2,7 @@ import numpy as np
 import numpyutil as nutil
 import nn_math as nn_math
 from  stacked_generative_model import StackedGenerativeModel
-
+import errors
 
 def append_bias_units(data):
     colshape=np.shape(data)[:-1] + (1,)
@@ -16,29 +16,34 @@ class M_DA(object):
 
     def train_unsupervised(self,data, noise_prob=0.2, reg=0.00001):
         '''Note: This is a full retrain. It destroys past learning'''
-        #X in paper,  xx in article
-        data = np.asarray(data)
+        try:
+            #X in paper,  xx in article
+            data = np.asarray(data)
 
-        #X in paper, xxb in article
-        data_with_bias = append_bias_units(data).T
-        datum_len = data_with_bias.shape[0]
+            #X in paper, xxb in article
+            data_with_bias = append_bias_units(data).T
+            datum_len = data_with_bias.shape[0]
 
-        #q in paper and aricle
-        noise = np.ones((datum_len,1))*(1-noise_prob)
-        noise[-1]=1
+            #q in paper and aricle
+            noise = np.ones((datum_len,1))*(1-noise_prob)
+            noise[-1]=1
 
-        #S in paper and article
-        scater_data = np.dot(data_with_bias,data_with_bias.T)
-        Q=scater_data*np.dot(noise,noise.T)
-        Q.flat[::datum_len+1]=noise*np.diag(scater_data)
+            #S in paper and article
+            scater_data = np.dot(data_with_bias,data_with_bias.T)
+            Q=scater_data*np.dot(noise,noise.T)
+            Q.flat[::datum_len+1]=noise*np.diag(scater_data)
 
-        P=scater_data*np.tile(noise,(1,datum_len)).T
+            P=scater_data*np.tile(noise,(1,datum_len)).T
 
-        reg_mat = np.eye(datum_len)*reg
-        numer = P[:-1,:]
-        denom = Q+reg_mat
+            reg_mat = np.eye(datum_len)*reg
+            numer = P[:-1,:]
+            denom = Q+reg_mat
 
-        self.weight_bias=np.dot(numer, np.linalg.pinv(denom)).T
+            self.weight_bias=np.dot(numer, np.linalg.pinv(denom)).T
+        except np.linalg.linalg.LinAlgError as internal_error:
+            self.weight_bias = np.nan
+            raise errors.TrainingFailedError("Could not train with this data", internal_error)
+            
 
 
     def get_output(self,x):

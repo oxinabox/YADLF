@@ -40,7 +40,7 @@ class UnlabelledImageDataset(generic_dataset.UnlabelledDataset):
         generic_dataset.UnlabelledDataset.__init__(self,data)
 
     def make_from(self, data):
-        return UnlabelledImageDataset(data, self.datashape, self.dtype)
+        return UnlabelledImageDataset(data, self.datashape)
 
     def show_data(self, sliceIndex):
         ''' good to use numpy.s_[slicenotation] to declare the sliceIndex'''
