@@ -67,13 +67,13 @@ class M_DA(object):
 
 
 class M_SDA(StackedGenerativeModel):
-    def __init__(self, weights, act_fun):
-            self.mdas = [M_DA(act_fun, w) for w in weights]
+    def __init__(self, weight_bais, act_fun):
+            self.mdas = [M_DA(act_fun, w) for w in weight_bais]
 
 
     @classmethod
     def random_init(cls, num_layers, act_fun=nn_math.sigmoid):
-        ws = [None for _ in xrange(num_layers)]
+        ws = [None]*num_layers
         return cls(ws, act_fun)
 
 
@@ -103,5 +103,6 @@ class M_SDA(StackedGenerativeModel):
 
     @property
     def knowledge(self):
-        return (self.weights, self.biases)
+        return map(lambda mda: mda.knowledge, self.mdas)
 
+    weight_bias = knowledge
