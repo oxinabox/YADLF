@@ -9,3 +9,9 @@ numpyutil.so: numpyutil.pyx
 
 #(datasets) 
 
+.PHONY : clean
+clean:
+	rm numpyutil.c
+	rm numpyutil.so
+
+
