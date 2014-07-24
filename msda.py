@@ -63,17 +63,17 @@ class M_DA(object):
 
     @property
     def knowledge(self):
-        return self.weight_bais
+        return self.weight_bias
 
 
 class M_SDA(StackedGenerativeModel):
-    def __init__(self, weight_bais, act_fun):
+    def __init__(self, weight_bais, act_fun=nn_math.sigmoid):
             self.mdas = [M_DA(act_fun, w) for w in weight_bais]
 
 
     @classmethod
-    def random_init(cls, num_layers, act_fun=nn_math.sigmoid):
-        ws = [None]*num_layers
+    def random_init(cls, num_hidden_layers, act_fun=nn_math.sigmoid):
+        ws = [None]*num_hidden_layers
         return cls(ws, act_fun)
 
 

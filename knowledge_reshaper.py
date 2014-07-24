@@ -1,5 +1,6 @@
 import numpy as np
 import numpyutil as nutil
+import itertools as it
 
 def rand_mat(rows,cols=None):
     if cols==None:
@@ -66,30 +67,23 @@ def append_top(new_layer_size, orig_ws, orig_upwards_bs, orig_downwards_bs):
       
     return (new_ws,new_upward_bs, new_downward_bs)
    
-def reset_layers(layer_nums_to_reset,
-                    orig_ws,
-                    orig_up_bs,
-                    orig_down_bs):
-    assert(len(layer_nums_to_reset)  == len (orig_ws))
+def reset_layers(layer_nums_to_reset,*orig):
+    #print nutil.arr_info(orig, "orig")
+    #print nutil.arr_info(orig[0],"orig[0]")
+    assert(len(layer_nums_to_reset)  == len (orig[0]))
     def random_like(mat):
         return rand_mat(*mat.shape)
     
-
-    new_ws=[]
-    new_upward_bs=[]
-    new_downward_bs=[]
+    news = [ [] for _ in orig]
  
-    for (reset, w,ub,db) in zip(layer_nums_to_reset,
-                                 orig_ws, orig_up_bs, orig_down_bs):
-        if reset:
-            new_ws.append(random_like(w))
-            new_upward_bs.append(random_like(ub))
-            new_downward_bs.append(random_like(db))
-        else:
-            new_ws.append(w)
-            new_upward_bs.append(ub)
-            new_downward_bs.append(db)
-    return new_ws, new_upward_bs, new_downward_bs
+    for layer_info in zip(layer_nums_to_reset, *orig):
+        reset = layer_info[0]
+        knows = layer_info[1:]
+        for new_know_list, old_know in zip (news,knows):
+            new_know = random_like(old_know) if reset else old_know  
+            new_know_list.append(new_know)
+
+    return news
 
 def replace_input_layer(new_size,
                     orig_ws,
