@@ -24,8 +24,8 @@ class StackedGenerativeModel(object):
         pass
 
 
-    def get_code(self,x, depth=None):
-        code_depth = len(self.layer_models) if depth==None else depth
+    def get_code(self,x, depth=-1):
+        code_depth = len(self.layer_models) if depth<0 else depth
         assert(code_depth<=len(self.layer_models))
 
         output_below = x
