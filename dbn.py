@@ -60,29 +60,37 @@ class DBN(StackedGenerativeModel):
             if rep_freq>0:
                 print "Done RBM: %i/%i" % (rbm_num+1, len(self.rbms))
 
-    def generate_image_from_top(self, y, equib_dur=1, depth=None):
-        if depth==None:
-            depth = len(self.rbms)-1
-        
-        top_rbm = self.rbms[depth];
+
+    def generate_image_from_top(self, y, equib_dur=1):
+        top_rbm = self.rbms[-1];
         output_above = y
         for ii in range(0,equib_dur): #HACK: insteaad of actually working out when we are in equiblium, just  do it a bunch of times
             vp = top_rbm.sample_v_given_h(output_above)
             output_above= nutil.sample(top_rbm.prob_h_given_v(vp))
-
         
-        for rbm in self.rbms[:depth+1][::-1]: 
+        for rbm in self.rbms[::-1]: 
             output_above = rbm.sample_v_given_h(output_above)
             
         return output_above
     
 
-    def generate_image_from_bottom(self,x, equib_dur, depth=-1):
-        top_out = self.get_code(x, depth)
-        return x, self.generate_image_from_top(top_out,
-                                               equib_dur=equib_dur,
-                                               depth=depth
-                                              )
+    def generate_image_from_bottom(self,x, equib_dur):
+        top_out = self.get_code(x)
+        return x, self.generate_image_from_top(top_out, equib_dur=equib_dur)
+	
+	def generate_image_with_depth(self,x,depth):
+		#TODO: refactor generate image methods
+		output_below=x
+		
+		for rbm in self.rbms[:depth]:
+			output_below = nutil.sample(rbm.prob_h_given_v(output_below)
+			
+		output_above=output_below #have reached top
+		for rbm in self.rbms[:depth][::-1]:
+			output_above= rbm.sample_v_given_h(output_above)
+		
+		return output_above
+		
 
         
 
