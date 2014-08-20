@@ -35,7 +35,7 @@ class DBN(StackedGenerativeModel):
                                learning_rate = 0.001,
                                momentum= 0.9,
                                reg = 0.0002,
-							   clip = None
+                               clip = None
                               ):
         trained_rbms = []
         for rbm_num, training_rbm in enumerate(self.rbms):
@@ -77,20 +77,20 @@ class DBN(StackedGenerativeModel):
     def generate_image_from_bottom(self,x, equib_dur):
         top_out = self.get_code(x)
         return x, self.generate_image_from_top(top_out, equib_dur=equib_dur)
-	
-	def generate_image_with_depth(self,x,depth):
-		#TODO: refactor generate image methods
-		output_below=x
-		
-		for rbm in self.rbms[:depth]:
-			output_below = nutil.sample(rbm.prob_h_given_v(output_below)
-			
-		output_above=output_below #have reached top
-		for rbm in self.rbms[:depth][::-1]:
-			output_above= rbm.sample_v_given_h(output_above)
-		
-		return output_above
-		
+    
+    def generate_image_with_depth(self,x,depth):
+        #TODO: refactor generate image methods
+        output_below=x
+        
+        for rbm in self.rbms[:depth]:
+            output_below = nutil.sample(rbm.prob_h_given_v(output_below))
+
+        output_above=output_below #have reached top
+        for rbm in self.rbms[:depth][::-1]:
+            output_above= rbm.sample_v_given_h(output_above)
+        
+        return output_above
+        
 
         
 
