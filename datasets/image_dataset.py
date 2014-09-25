@@ -59,7 +59,6 @@ class LabelledImageDataset(generic_dataset.LabelledDataset):
 
     def show_data(self, sliceIndex):
         ''' good to use numpy.s_[slicenotation] to declare the sliceIndex'''
-        print "+"+sliceIndex
         data_vectors_and_titles = self.data[sliceIndex]        
         show_titled_data(data_vectors_and_titles, self.datashape)
 
