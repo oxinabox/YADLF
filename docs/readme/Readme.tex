@@ -1,0 +1,203 @@
+%% LyX 2.1.2 created this file.  For more info, see http://www.lyx.org/.
+%% Do not edit unless you really know what you are doing.
+\documentclass[english]{scrartcl}
+\usepackage[T1]{fontenc}
+\usepackage[latin9]{inputenc}
+\setcounter{tocdepth}{2}
+\usepackage{refstyle}
+
+\makeatletter
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% LyX specific LaTeX commands.
+
+\AtBeginDocument{\providecommand\secref[1]{\ref{sec:#1}}}
+\providecommand{\LyX}{L\kern-.1667em\lower.25em\hbox{Y}\kern-.125emX\@}
+\RS@ifundefined{subref}
+  {\def\RSsubtxt{section~}\newref{sub}{name = \RSsubtxt}}
+  {}
+\RS@ifundefined{thmref}
+  {\def\RSthmtxt{theorem~}\newref{thm}{name = \RSthmtxt}}
+  {}
+\RS@ifundefined{lemref}
+  {\def\RSlemtxt{lemma~}\newref{lem}{name = \RSlemtxt}}
+  {}
+
+
+\makeatother
+
+\usepackage{babel}
+\begin{document}
+
+\title{YADLF}
+
+
+\subtitle{Year Another Deep Learning Framework}
+
+
+\author{Lyndon White\\
+University of Western Australia,\\
+ School of Electrical Electronic and Computer Engineering\\
+Signals and Information Processing Lab}
+
+
+\date{\phantom{}}
+
+\maketitle
+This text originally appears as an appendix to my honours paper: ``DNN
+Low Level Reinitialization: A Method for Enhancing Learning in Deep
+Neural Networks through Knowledge Transfer'' (Lyndon White, October
+2014).
+
+Large portions of the text originally appears in the Project Proposal
+for ``Domain Adaptation in Deep Belief Networks'' (Lyndon White,
+May 2014).
+
+
+\section{The YADLF Framework}
+
+A framework for neural network based machine learning has been created.
+The library created is titled, semi-ironically, YADLF or Yet Another
+Deep Learning Framework. At the conclusion of this project YADLF will
+be released as a open source project to allow it to be used by others
+in their research, or as a learning resource for future implementers.
+
+Existing frameworks such as GPUMLib and Pylearn2 were examined and
+considered unsuitable. In particular, it was found that frameworks
+were typically purpose-constructed by the research authors. Existing
+frameworks being too inflexible to allow new techniques to be easily
+explored.
+
+Further, as marginalizing stacked denoising autoencoders\cite{chen2014marginalized}
+(mSDA) are a fairly new they have not been incorporated into any existing
+larger deep learning library. 
+
+Constructing this framework has been a positive educational exercise,
+and has lead to a better understanding of the algorithms involved.
+With improved understanding of how it all works together, it was easier
+to implement adjustments required which has allowed for this project
+to accomplish its goals. A variety of technologies have been used
+to create YADLF.
+
+The framework was created in Python 2.7\cite{van2010python} using
+a number of tools, as were found to be common in research papers.
+Preeminently amongst the tools used are numpy\cite{pythonforscience}\cite{Scipy},
+Cython\cite{behnel2010cython} and IPython\cite{:/content/aip/journal/cise/9/3/10.1109/MCSE.2007.53}.
+Numpy is a library for working with the SIMD (Single Instruction Multiple
+Data) components of the CPU\cite{pythonforscience}\cite{Scipy}.
+Using numpy is very similar in techniques and speed to using Matlab.
+Cython is a extension to the Python language that compiles Python
+via C into native machine code\cite{behnel2010cython}. Through profiling
+the most critical sections where Cython gives speed improvement have
+been determined, and rewritten using Cython. Using these tools a well
+featured and flexible machine learning library was implemented.
+
+
+\subsection{Features}
+
+\label{par:Features}
+
+The framework has the following features.
+\begin{itemize}
+\item Dataset techniques:
+
+\begin{itemize}
+\item Standardized\cite{lecun2012efficient} %
+\footnote{Implemented in current version using scikit-learn preprocessing library\cite{scikit-learn},
+for speed.%
+}
+\item Balancing of order of training case classes\cite{lecun2012efficient}\cite{Hinton2010pracrbm},
+while preserving separation of test and training data.
+\item Serialization for fast loading\cite{bilina2012python}
+\end{itemize}
+\item RBMs:
+
+\begin{itemize}
+\item Bernoulli-Bernoulli RBMs (BB-RBM)\cite{bengio2009learningch5} 
+\item Gaussian-Bernoulli RBMs (GB-RBM)\cite{bengio2007greedy} -- with standardized
+input only. 
+\item Contrastive Divergence\cite{hinton2002contrastive_divergance} training
+algorithm, with momentum\cite{Hinton2010pracrbm}, mini-batch learning\cite{Hinton2010pracrbm}
+and L2 Weight Decay \cite{Hinton2010pracrbm}
+\end{itemize}
+\item Feed Forward Neural Networks:
+
+\begin{itemize}
+\item Back-propagation\cite{rumelhart1986learning} with momentum\cite{rumelhart1986learning},
+mini-batch learning\cite{lecun2012efficient} and L2 Weight Decay
+\cite{hinton1993keeping}
+\item Early Stopping\cite{prechelt1998early}, with optional learning rate
+adaption
+\item Variety of neuron activation functions including softmax\cite{Bridle1990}
+and sigmoid\cite{rumelhart1986learning}.
+\end{itemize}
+\item DBNs
+
+\begin{itemize}
+\item Greedy Layer-wise Training \cite{bengio2009learningch6}
+\item Conversion to initialized DNN\cite{GoeffHinton.3052013.}\cite{bengio2007greedy}
+\end{itemize}
+\item mSDAs
+
+\begin{itemize}
+\item mSDA full batch training\cite{chen2014marginalized}
+\item Conversion to initialized DNN\cite{GoeffHinton.3052013.}\cite{bengio2007greedy}
+\end{itemize}
+\item Knowledge Matrix Restructuring Techniques
+
+\begin{itemize}
+\item As the focus of this project was investigation into transfer of knowledge
+YADLF, unlike any existent deep learning library, comes with substantial
+functionality for manipulating the knowledge of neural architectures.
+Those being the bias and weight matrices. It does this without destroying
+any knowledge contained within the layers.
+\item Reinitialization of layers (Used in DNN LLR to reset the bottom layer)
+\item Widening of layers, making them wider with new neurons.
+\item Adding layers to the top of the network
+\end{itemize}
+\end{itemize}
+YADLF works well with the Data Analysis tools discussed in \secref{Results-Analysis-Tools}.
+
+
+\section{Data Analysis and Presentation Tools\label{sec:Results-Analysis-Tools}}
+
+Analysis of results and production of plots for this report was carried
+out using well developed scientific Python ecosystem. 
+\begin{itemize}
+\item IPython is a Python interface, which resembles the Mathematica notebook\cite{:/content/aip/journal/cise/9/3/10.1109/MCSE.2007.53}.
+
+\begin{itemize}
+\item It was used as an interface for the majority of interaction with the
+data analysis tools.
+\item It also supports process dispatching across multiple cores. This was
+used in preliminary analysis
+\end{itemize}
+\item Pandas \cite{mckinney-pandas} what used for data analysis
+
+\begin{itemize}
+\item Tasks such as finding the means and standard deviations, on a basis
+of per topology and training set size, are findable in a few lines
+of code.
+\end{itemize}
+\item Matplotlib\cite{Hunter:2007}
+
+\begin{itemize}
+\item Matplotlib is the standard underlying plotting and graphing framework
+for python.
+\item It is used by Pandas and Seaborn.
+\end{itemize}
+\item Seaborn\cite{seaborn}
+
+\begin{itemize}
+\item Seaborn is a data visualization tool
+\item It draws on the capacities of matplotlib and Pandas to allow many
+more types of plots and charts to be created
+\end{itemize}
+\item The \TeX{} package Tikz\cite{tikz} was used to generate the diagrams
+used thought this work.
+\item This paper was was created in \LyX{}\cite{lyx}, and typeset using
+Lua\TeX{}\cite{luatex}.
+\end{itemize}
+\bibliographystyle{IEEEtran}
+\bibliography{bibliography}
+
+\end{document}
